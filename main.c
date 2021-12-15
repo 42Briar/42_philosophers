@@ -6,7 +6,7 @@
 /*   By: pvan-dij <pvan-dij@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/12/15 16:26:03 by pvan-dij      #+#    #+#                 */
-/*   Updated: 2021/12/15 16:42:07 by pvan-dij      ########   odam.nl         */
+/*   Updated: 2021/12/15 16:49:23 by pvan-dij      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,5 +153,5 @@ consider removing death monitor and replacing it with checker function called fr
 and need to remove the many data races
 */
 
-//fsanitize=threads
+//fsanitize=thread
 //https://github.com/MichelleJiam/LazyPhilosophersTester
