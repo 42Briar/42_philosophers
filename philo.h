@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        ::::::::            */
+/*   philo.h                                            :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: pvan-dij <pvan-dij@student.codam.nl>         +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2021/12/15 16:26:13 by pvan-dij      #+#    #+#                 */
+/*   Updated: 2021/12/15 16:28:49 by pvan-dij      ########   odam.nl         */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef PHILO_H
 # define PHILO_H
 
@@ -38,7 +50,7 @@ struct s_philo {
 long		ft_atoi(const char *str);
 void		init(char **argv, int argc, t_rules *rules);
 long long	gettime(void);
-void		printstatus(char *status, t_philos *philo);
+void		printstatus(char *status, t_philos *philo, int mode);
 bool		checkdeath(t_rules *rules);
 void		sleeping(long long time);
 bool		checkarg(int argc, char **argv);

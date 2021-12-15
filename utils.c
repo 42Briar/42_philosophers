@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        ::::::::            */
+/*   utils.c                                            :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: pvan-dij <pvan-dij@student.codam.nl>         +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2021/12/15 16:26:10 by pvan-dij      #+#    #+#                 */
+/*   Updated: 2021/12/15 16:32:31 by pvan-dij      ########   odam.nl         */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
 long	ft_atoi(const char *str)
@@ -36,14 +48,22 @@ long long	gettime(void)
 	return (time.tv_sec * 1000 + time.tv_usec / 1000);
 }
 
-void	printstatus(char *status, t_philos *philo)
+void	printstatus(char *status, t_philos *philo, int mode)
 {
-	pthread_mutex_lock(&(philo->rules->write));
-	if (!philo->rules->death)
+	if (mode)
 	{
+		pthread_mutex_lock(&(philo->rules->write));
 		printf("%lld | Philosopher: %d %s\n", \
-		(gettime() - philo->rules->start), philo->id, status);
+			(gettime() - philo->rules->start), philo->id, status);
+		pthread_mutex_unlock(&(philo->rules->write));
+		return ;
 	}
+	pthread_mutex_lock(&(philo->rules->write));
+	pthread_mutex_lock(&(philo->rules->mutex_death));
+	if (!philo->rules->death)
+		printf("%lld | Philosopher: %d %s\n", \
+			(gettime() - philo->rules->start), philo->id, status);
+	pthread_mutex_unlock(&(philo->rules->mutex_death));
 	pthread_mutex_unlock(&(philo->rules->write));
 	return ;
 }

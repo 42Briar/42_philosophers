@@ -1,7 +1,7 @@
 NAME = philo
 CC = gcc
 SRC = main.c utils.c init.c
-CFLAGS = -Wextra -Wall -Werror
+CFLAGS = -Wextra -Wall -Werror -fsanitize=thread
 OBJ = ${SRC:.c=.o}
 
 GREEN = \x1b[32m

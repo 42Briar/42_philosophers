@@ -1,19 +1,31 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        ::::::::            */
+/*   main.c                                             :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: pvan-dij <pvan-dij@student.codam.nl>         +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2021/12/15 16:26:03 by pvan-dij      #+#    #+#                 */
+/*   Updated: 2021/12/15 16:42:07 by pvan-dij      ########   odam.nl         */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
 void	deathcheck(t_rules *rules)
 {
 	int	i;
 
-	while (rules->death != true)
+	while (true)
 	{
 		i = 0;
-		while (i < rules->philonum && rules->death != true)
+		while (i < rules->philonum)
 		{
 			pthread_mutex_lock(&(rules->mutex_death));
 			if ((gettime() - (rules->philosophers[i].last_meal)) > \
 			rules->time_to_die)
 			{	
-				printstatus("has died", &(rules->philosophers[i]));
+				printstatus("has died", &(rules->philosophers[i]), 1);
 				rules->death = true;
 				pthread_mutex_unlock(&(rules->mutex_death));
 				return ;
@@ -29,17 +41,29 @@ void	deathcheck(t_rules *rules)
 			pthread_mutex_lock(&(rules->mutex_death));
 			rules->death = true;
 			pthread_mutex_unlock(&(rules->mutex_death));
+			break ;
 		}
+		pthread_mutex_lock(&(rules->mutex_death));
+		if (rules->death == true)
+		{
+			pthread_mutex_unlock(&(rules->mutex_death));
+			break ;
+		}
+		pthread_mutex_unlock(&(rules->mutex_death));
 	}
 }
 
 bool	is_dead(t_philos *philo)
 {
 	pthread_mutex_lock(&(philo->rules->mutex_death));
-	if ((gettime() - philo->last_meal) > philo->rules->time_to_die || philo->rules->death)
+	if ((gettime() - philo->last_meal) > philo->rules->time_to_die || \
+	philo->rules->death)
 	{	
-		printstatus("has died", philo);
-		philo->rules->death = true;
+		if (!philo->rules->death)
+		{
+			printstatus("has died", philo, 1);
+			philo->rules->death = true;
+		}
 		pthread_mutex_unlock(&(philo->rules->mutex_death));
 		return (true);
 	}
@@ -57,7 +81,7 @@ void	*philo_thread(void *philos)
 	while (true)
 	{
 		pthread_mutex_lock(&(philo->rules->forks[philo->l_fork]));
-		printstatus("has taken a fork", philos);
+		printstatus("has taken a fork", philos, 0);
 		if (philo->rules->philonum == 1)
 		{
 			pthread_mutex_unlock(&(philo->rules->forks[philo->l_fork]));
@@ -70,16 +94,16 @@ void	*philo_thread(void *philos)
 			pthread_mutex_unlock(&(philo->rules->forks[philo->r_fork]));
 			break ;
 		}
-		printstatus("has taken a fork", philos);
-		printstatus("is eating", philos);
+		printstatus("has taken a fork", philos, 0);
+		printstatus("is eating", philos, 0);
 		philo->last_meal = gettime();
 		sleeping(philo->rules->time_to_eat);
 		philo->times_ate++;
 		pthread_mutex_unlock(&(philo->rules->forks[philo->l_fork]));
 		pthread_mutex_unlock(&(philo->rules->forks[philo->r_fork]));
-		printstatus("is sleeping", philos);
+		printstatus("is sleeping", philos, 0);
 		sleeping(philo->rules->time_to_sleep);
-		printstatus("is thinking", philos);
+		printstatus("is thinking", philos, 0);
 	}
 	return (NULL);
 }
