@@ -6,7 +6,7 @@
 /*   By: pvan-dij <pvan-dij@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/12/15 16:26:03 by pvan-dij      #+#    #+#                 */
-/*   Updated: 2021/12/15 16:49:23 by pvan-dij      ########   odam.nl         */
+/*   Updated: 2021/12/15 17:07:59 by pvan-dij      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,9 +116,9 @@ void	run_philos(t_rules *rules)
 	rules->start = gettime();
 	while (i < rules->philonum)
 	{
+		rules->philosophers[i].last_meal = rules->start;
 		pthread_create(&(rules->philosophers[i].thread), \
 		NULL, philo_thread, &(rules->philosophers[i]));
-		rules->philosophers[i].last_meal = rules->start;
 		i++;
 	}
 	i = 0;
