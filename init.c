@@ -6,7 +6,7 @@
 /*   By: pvan-dij <pvan-dij@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/12/15 16:26:06 by pvan-dij      #+#    #+#                 */
-/*   Updated: 2021/12/15 16:26:08 by pvan-dij      ########   odam.nl         */
+/*   Updated: 2021/12/16 18:25:05 by pvan-dij      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ void	init_philos(t_rules *rules)
 		else
 			rules->philosophers[i].r_fork = i + 1;
 		rules->philosophers[i].rules = rules;
+		pthread_mutex_init(&(rules->philosophers[i].eat), NULL);
 		i++;
 	}
 }
@@ -42,7 +43,7 @@ void	init(char **argv, int argc, t_rules *rules)
 	rules->time_to_die = ft_atoi(argv[2]);
 	rules->time_to_eat = ft_atoi(argv[3]);
 	rules->time_to_sleep = ft_atoi(argv[4]);
-	rules->death = false;
+	rules->state = RUN;
 	if (argc == 6)
 		rules->num_eat = ft_atoi(argv[5]);
 	else
@@ -53,7 +54,6 @@ void	init(char **argv, int argc, t_rules *rules)
 	while (++i < rules->philonum)
 		pthread_mutex_init(&(rules->forks[i]), NULL);
 	pthread_mutex_init(&(rules->write), NULL);
-	pthread_mutex_init(&(rules->mutex_death), NULL);
 	init_philos(rules);
 }
 

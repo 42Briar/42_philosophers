@@ -6,7 +6,7 @@
 /*   By: pvan-dij <pvan-dij@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/12/15 16:26:13 by pvan-dij      #+#    #+#                 */
-/*   Updated: 2021/12/15 16:28:49 by pvan-dij      ########   odam.nl         */
+/*   Updated: 2021/12/16 18:33:28 by pvan-dij      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,11 @@
 
 typedef struct s_philo	t_philos;
 
+typedef enum e_runtime {
+	RUN,
+	END
+}	t_run;
+
 typedef struct s_rules {
 	int				philonum;
 	int				time_to_die;
@@ -30,30 +35,30 @@ typedef struct s_rules {
 	int				time_to_sleep;
 	int				num_eat;
 	long long		start;
-	bool			death;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	write;
-	pthread_mutex_t	mutex_death;
 	t_philos		*philosophers;
+	t_run			state;
 }	t_rules;
 
 struct s_philo {
-	int			id;
-	int			r_fork;
-	int			l_fork;
-	int			times_ate;
-	long long	last_meal;
-	pthread_t	thread;
-	t_rules		*rules;
+	int				id;
+	int				r_fork;
+	int				l_fork;
+	int				times_ate;
+	long long		last_meal;
+	pthread_t		thread;
+	pthread_mutex_t	eat;
+	t_rules			*rules;
 };
 
 long		ft_atoi(const char *str);
 void		init(char **argv, int argc, t_rules *rules);
 long long	gettime(void);
-void		printstatus(char *status, t_philos *philo, int mode);
-bool		checkdeath(t_rules *rules);
+void		printstatus(char *status, t_philos *philo);
 void		sleeping(long long time);
 bool		checkarg(int argc, char **argv);
-bool		is_dead(t_philos *philo);
+bool		check(t_rules *rules, t_philos *philo);
+void		deathmonitor(t_rules *rules);
 
 #endif

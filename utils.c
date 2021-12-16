@@ -6,7 +6,7 @@
 /*   By: pvan-dij <pvan-dij@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/12/15 16:26:10 by pvan-dij      #+#    #+#                 */
-/*   Updated: 2021/12/15 16:32:31 by pvan-dij      ########   odam.nl         */
+/*   Updated: 2021/12/16 18:04:22 by pvan-dij      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,22 +48,12 @@ long long	gettime(void)
 	return (time.tv_sec * 1000 + time.tv_usec / 1000);
 }
 
-void	printstatus(char *status, t_philos *philo, int mode)
+void	printstatus(char *status, t_philos *philo)
 {
-	if (mode)
-	{
-		pthread_mutex_lock(&(philo->rules->write));
-		printf("%lld | Philosopher: %d %s\n", \
-			(gettime() - philo->rules->start), philo->id, status);
-		pthread_mutex_unlock(&(philo->rules->write));
-		return ;
-	}
 	pthread_mutex_lock(&(philo->rules->write));
-	pthread_mutex_lock(&(philo->rules->mutex_death));
-	if (!philo->rules->death)
+	if (philo->rules->state == RUN)
 		printf("%lld | Philosopher: %d %s\n", \
 			(gettime() - philo->rules->start), philo->id, status);
-	pthread_mutex_unlock(&(philo->rules->mutex_death));
 	pthread_mutex_unlock(&(philo->rules->write));
 	return ;
 }
@@ -80,5 +70,6 @@ void	sleeping(long long time)
 			break ;
 		usleep(50);
 	}
+	usleep(100);
 	return ;
 }
