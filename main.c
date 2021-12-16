@@ -6,7 +6,7 @@
 /*   By: pvan-dij <pvan-dij@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/12/15 16:26:03 by pvan-dij      #+#    #+#                 */
-/*   Updated: 2021/12/16 18:27:32 by pvan-dij      ########   odam.nl         */
+/*   Updated: 2021/12/16 18:50:07 by pvan-dij      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 void	eat(t_philos *philo)
 {
-	printstatus("is eating", philo);
 	pthread_mutex_lock(&(philo->rules->forks[philo->l_fork]));
 	printstatus("has taken a fork", philo);
 	if (philo->rules->philonum == 1)
@@ -23,9 +22,11 @@ void	eat(t_philos *philo)
 		return ;
 	}
 	pthread_mutex_lock(&(philo->rules->forks[philo->r_fork]));
-	pthread_mutex_lock(&(philo->eat));
 	printstatus("has taken a fork", philo);
+	printstatus("is eating", philo);
+	pthread_mutex_lock(&(philo->eat));
 	philo->last_meal = gettime();
+	philo->times_ate++;
 	pthread_mutex_unlock(&(philo->eat));
 	sleeping(philo->rules->time_to_eat);
 	pthread_mutex_unlock(&(philo->rules->forks[philo->l_fork]));
@@ -42,11 +43,8 @@ void	*philo_thread(void *p)
 	while (philo->rules->state == RUN)
 	{
 		eat(philo);
-		philo->times_ate++;
 		if (philo->rules->philonum == 1)
 			return (NULL);
-		if (check(philo->rules, philo))
-			break ;
 		printstatus("is sleeping", philo);
 		sleeping(philo->rules->time_to_sleep);
 		printstatus("is thinking", philo);

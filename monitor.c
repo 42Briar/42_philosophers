@@ -6,7 +6,7 @@
 /*   By: pvan-dij <pvan-dij@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/12/16 15:33:36 by pvan-dij      #+#    #+#                 */
-/*   Updated: 2021/12/16 18:34:16 by pvan-dij      ########   odam.nl         */
+/*   Updated: 2021/12/16 20:49:11 by pvan-dij      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	deathmonitor(t_rules	*rules)
 {
 	int		i;
 
-	while (rules->state == RUN)
+	while (true)
 	{
 		i = 0;
 		while (i < rules->philonum)
@@ -41,11 +41,12 @@ void	deathmonitor(t_rules	*rules)
 			if ((gettime() - (rules->philosophers[i].last_meal)) > \
 				rules->time_to_die)
 			{	
+				printstatus("has died", &(rules->philosophers[i]));
+				pthread_mutex_lock(&(rules->write));
 				rules->state = END;
+				pthread_mutex_unlock(&(rules->write));
 				pthread_mutex_unlock(&(rules->philosophers[i].eat));
-				printf("%lld | Philosopher: %d %s\n", \
-					(gettime() - rules->start), i + 1, "has died");
-				break ;
+				return ;
 			}
 			pthread_mutex_unlock(&(rules->philosophers[i].eat));
 			i++;
@@ -54,20 +55,4 @@ void	deathmonitor(t_rules	*rules)
 			return ;
 	}
 	return ;
-}
-
-bool	check(t_rules *rules, t_philos *philo)
-{
-	pthread_mutex_lock(&(philo->eat));
-	if ((gettime() - (philo->last_meal)) > \
-		rules->time_to_die)
-	{	
-		rules->state = END;
-		pthread_mutex_unlock(&(philo->eat));
-		printf("%lld | Philosopher: %d %s\n", \
-			(gettime() - rules->start), philo->id, "has died");
-		return (true);
-	}
-	pthread_mutex_unlock(&(philo->eat));
-	return (false);
 }
