@@ -6,7 +6,7 @@
 /*   By: pvan-dij <pvan-dij@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/12/15 16:26:10 by pvan-dij      #+#    #+#                 */
-/*   Updated: 2021/12/16 18:46:20 by pvan-dij      ########   odam.nl         */
+/*   Updated: 2021/12/16 21:20:14 by pvan-dij      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,4 +72,11 @@ void	sleeping(long long time)
 	}
 	usleep(100);
 	return ;
+}
+
+int	ft_isdigit(int c)
+{
+	if (c >= 48 && c <= 57)
+		return (1);
+	return (0);
 }

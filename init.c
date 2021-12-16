@@ -6,19 +6,21 @@
 /*   By: pvan-dij <pvan-dij@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/12/15 16:26:06 by pvan-dij      #+#    #+#                 */
-/*   Updated: 2021/12/16 18:25:05 by pvan-dij      ########   odam.nl         */
+/*   Updated: 2021/12/16 21:32:23 by pvan-dij      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	init_philos(t_rules *rules)
+int	init_philos(t_rules *rules)
 {
 	int	i;
 
 	i = 0;
 	rules->philosophers = (t_philos *)malloc(\
 	sizeof(t_philos) * rules->philonum);
+	if (!rules->philosophers)
+		return (failure(rules));
 	while (i < rules->philonum)
 	{
 		rules->philosophers[i].id = i + 1;
@@ -30,12 +32,14 @@ void	init_philos(t_rules *rules)
 		else
 			rules->philosophers[i].r_fork = i + 1;
 		rules->philosophers[i].rules = rules;
-		pthread_mutex_init(&(rules->philosophers[i].eat), NULL);
+		if (pthread_mutex_init(&(rules->philosophers[i].eat), NULL))
+			return (failure(rules));
 		i++;
 	}
+	return (0);
 }
 
-void	init(char **argv, int argc, t_rules *rules)
+int	init(char **argv, int argc, t_rules *rules)
 {
 	int	i;
 
@@ -50,25 +54,40 @@ void	init(char **argv, int argc, t_rules *rules)
 		rules->num_eat = -1;
 	rules->forks = (pthread_mutex_t *)malloc(\
 	sizeof(pthread_mutex_t) * rules->philonum);
+	if (!rules->forks)
+		return (failure(rules));
 	i = -1;
 	while (++i < rules->philonum)
-		pthread_mutex_init(&(rules->forks[i]), NULL);
-	pthread_mutex_init(&(rules->write), NULL);
-	init_philos(rules);
+		if (pthread_mutex_init(&(rules->forks[i]), NULL))
+			return (failure(rules));
+	if (pthread_mutex_init(&(rules->write), NULL))
+		return (failure(rules));
+	return (init_philos(rules));
+}
+
+bool	digitcheck(char *s)
+{
+	while (*s)
+	{
+		if (!ft_isdigit(*s))
+			return (false);
+		s++;
+	}
+	return (true);
 }
 
 bool	checkarg(int argc, char **argv)
 {
-	if (ft_atoi(argv[1]) > 200 || ft_atoi(argv[1]) <= 0)
+	if (!digitcheck(argv[1]) || ft_atoi(argv[1]) > 200 || ft_atoi(argv[1]) <= 0)
 		return (false);
-	if (ft_atoi(argv[2]) < 60)
+	if (!digitcheck(argv[2]) || ft_atoi(argv[2]) < 60)
 		return (false);
-	if (ft_atoi(argv[3]) < 60)
+	if (!digitcheck(argv[3]) || ft_atoi(argv[3]) < 60)
 		return (false);
-	if (ft_atoi(argv[4]) < 60)
+	if (!digitcheck(argv[4]) || ft_atoi(argv[4]) < 60)
 		return (false);
 	if (argc == 6)
-		if (ft_atoi(argv[5]) <= 0)
+		if (!digitcheck(argv[5]) || ft_atoi(argv[5]) <= 0)
 			return (false);
 	return (true);
 }

@@ -6,7 +6,7 @@
 /*   By: pvan-dij <pvan-dij@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/12/15 16:26:03 by pvan-dij      #+#    #+#                 */
-/*   Updated: 2021/12/16 18:50:07 by pvan-dij      ########   odam.nl         */
+/*   Updated: 2021/12/16 21:33:36 by pvan-dij      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ void	*philo_thread(void *p)
 	return (NULL);
 }
 
-void	run_philos(t_rules *rules)
+int	run_philos(t_rules *rules)
 {
 	int			i;
 
@@ -61,21 +61,17 @@ void	run_philos(t_rules *rules)
 	while (i < rules->philonum)
 	{
 		rules->philosophers[i].last_meal = rules->start;
-		pthread_create(&(rules->philosophers[i].thread), \
-		NULL, philo_thread, &(rules->philosophers[i]));
+		if (pthread_create(&(rules->philosophers[i].thread), \
+		NULL, philo_thread, &(rules->philosophers[i])))
+			return (killthreads(rules, i));
 		i++;
-	}
+	}	
 	deathmonitor(rules);
 	i = -1;
 	while (++i < rules->philonum)
 		pthread_join((rules->philosophers[i].thread), NULL);
-	i = 0;
-	while (i++ < rules->philonum)
-	{
-		pthread_mutex_destroy(&(rules->forks[i]));
-		pthread_mutex_destroy(&(rules->philosophers[i].eat));
-	}	
-	pthread_mutex_destroy(&(rules->write));
+	cleanup(rules);
+	return (0);
 }
 
 int	main(int argc, char *argv[])
@@ -84,10 +80,12 @@ int	main(int argc, char *argv[])
 
 	rules = (t_rules *)malloc(sizeof(t_rules));
 	if (argc < 5 || argc > 6)
-		return (0);
+		return (1);
 	if (!checkarg(argc, argv))
-		return (0);
-	init(argv, argc, rules);
-	run_philos(rules);
-	return (1);
+		return (1);
+	if (init(argv, argc, rules))
+		return (1);
+	if (run_philos(rules))
+		return (1);
+	return (0);
 }

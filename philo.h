@@ -6,7 +6,7 @@
 /*   By: pvan-dij <pvan-dij@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/12/15 16:26:13 by pvan-dij      #+#    #+#                 */
-/*   Updated: 2021/12/16 18:33:28 by pvan-dij      ########   odam.nl         */
+/*   Updated: 2021/12/16 21:27:24 by pvan-dij      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,12 +53,15 @@ struct s_philo {
 };
 
 long		ft_atoi(const char *str);
-void		init(char **argv, int argc, t_rules *rules);
+int			init(char **argv, int argc, t_rules *rules);
 long long	gettime(void);
 void		printstatus(char *status, t_philos *philo);
 void		sleeping(long long time);
 bool		checkarg(int argc, char **argv);
-bool		check(t_rules *rules, t_philos *philo);
 void		deathmonitor(t_rules *rules);
+int			cleanup(t_rules *rules);
+int			failure(t_rules *rules);
+int			ft_isdigit(int c);
+int			killthreads(t_rules *rules, int i);
 
 #endif

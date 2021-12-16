@@ -1,6 +1,6 @@
 NAME = philo
 CC = gcc
-SRC = main.c utils.c init.c monitor.c
+SRC = main.c utils.c init.c monitor.c clean.c
 CFLAGS = -Wextra -Wall -Werror -O3
 OBJ = ${SRC:.c=.o}
 
